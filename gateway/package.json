@@ -1,0 +1,18 @@
+{
+  "name": "terrarium-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "flow:generate": "node ./scripts/generate-flow.mjs",
+    "register": "node ./register-gateway.mjs",
+    "simulate": "node ./simulator/mock-telemetry.mjs",
+    "start": "node-red --userDir ."
+  },
+  "dependencies": {
+    "node-red": "4.1.8",
+    "node-red-dashboard": "3.6.6",
+    "node-red-node-serialport": "2.0.3",
+    "node-red-node-sqlite": "2.0.0"
+  }
+}

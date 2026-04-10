@@ -1,0 +1,87 @@
+Název: Správa více terárií 
+
+Kontext (situace) 
+
+Chovatel vlastní více terárií s různými druhy zvířat, přičemž každé terárium vyžaduje specifické podmínky prostředí, zejména teplotu a vlhkost. Pro zajištění zdraví zvířat je nutné tyto hodnoty pravidelně sledovat a udržovat v definovaném rozsahu. 
+Chovatel proto potřebuje přehledný nástroj, který mu umožní spravovat jednotlivá terária odděleně. 
+
+Tvar 
+
+Role 
+
+Chovatel (uživatel aplikace) 
+
+Tvar 
+
+Motivace (proč to řeší) 
+
+Chovatel potřebuje mít přehled o podmínkách v každém teráriu zvlášť, protože nevhodné podmínky mohou negativně ovlivnit zdraví zvířat. 
+Zároveň chce mít možnost nastavit ideální hodnoty pro každé terárium individuálně a sledovat jejich vývoj v čase. 
+
+Tvar 
+
+Shrnutí 
+
+Jako chovatel s více druhy zvířat chci mít možnost přidat a spravovat více terárií v aplikaci, abych mohl sledovat teplotu a vlhkost pro každé zvlášť, nastavovat pro ně individuální podmínky a zobrazovat jejich historii. 
+
+Tvar 
+
+Scénář (happy path) 
+
+Uživatel otevře aplikaci. 
+
+Zvolí možnost „Přidat terárium“. 
+
+Zadá název terária (např. podle druhu zvířete). 
+
+Nastaví požadované hodnoty: 
+
+minimální a maximální teplotu 
+
+minimální a maximální vlhkost 
+
+Uloží terárium. 
+
+Terárium se zobrazí v seznamu terárií. 
+
+Uživatel vybere konkrétní terárium. 
+
+Aplikace zobrazí: 
+
+aktuální teplotu a vlhkost 
+
+historická data ve formě grafu 
+
+Uživatel může mezi terárii přepínat a upravovat jejich nastavení. 
+
+Tvar 
+
+Alternativní scénáře 
+
+1. Nevyplněný název 
+
+Pokud uživatel nezadá název terária, aplikace ho vyzve k doplnění. 
+
+2. Duplicitní název 
+
+Aplikace upozorní na duplicitní název. 
+
+3. Nepřipojené zařízení 
+
+Terárium je vytvořeno, ale zobrazí se stav „zařízení nepřipojeno“ a nejsou dostupná aktuální data. 
+
+Tvar 
+
+Definition of Done 
+
+Lze vytvořit více terárií (minimálně 2). 
+
+Každé terárium zobrazuje vlastní data (nedochází k jejich míchání). 
+
+Nastavení limitů se ukládá a je možné ho upravovat. 
+
+Historie dat je dostupná a správně se zobrazuje. 
+
+Funkcionalita je dostupná v uživatelském rozhraní aplikace. 
+
+ 

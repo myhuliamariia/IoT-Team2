@@ -1,0 +1,29 @@
+{
+  "name": "@biot/web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@biot/shared": "file:../../packages/shared",
+    "@hookform/resolvers": "^5.2.2",
+    "@tanstack/react-query": "^5.97.0",
+    "clsx": "^2.1.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-hook-form": "^7.72.1",
+    "react-router-dom": "^7.14.0",
+    "recharts": "^3.8.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "vite": "^8.0.8"
+  }
+}

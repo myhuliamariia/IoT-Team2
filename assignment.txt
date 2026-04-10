@@ -1,0 +1,86 @@
+Assignment
+The aim of the semester project is to design and develop a complete IoT solution consisting of IoT nodes, gateway and cloud application. The IoT node will be built on top of the HARDWARIO Core Module microcontroller. Thus, within the IoT solution you have a button, 3-axis accelerometer and digital temperature sensor at each IoT node.
+
+Your task will be to design and create a comprehensive IoT project that solves a real-world problem. The final solution will be an MVP (minimum viable product), a cloud application accessible from the Internet.
+Possible tasks to solve:
+Temperature
+fire prevention
+energy savings
+predictive maintenance
+weather stations
+Accelerometer
+tree falls
+machine stroke
+unauthorized manipulation
+Button
+calling the operator
+production status
+fault reporting
+SOS button
+For the needs of the chosen solution, you can also extend the IoT Node with additional sensors or HARDWARIO modules and tags.
+Basic architecture of the solution
+Optional
+IoT Node
+Gateway
+Cloud
+Application
+HTTPS
+IoT Node
+Gateway
+HTTPS
+User
+User
+User
+Communication based on UART
+Communication based on 868/915 MHz band
+Radio Dongle is required in case of communication based 868/915 MHz band
+In case of using the HARDWARIO Core Module without using the HARDWARIO Radio Dongle, the IoT Node will communicate with the Gateway via USB and UART. Only one IoT Node will be connected to one Gateway. In the case of using a Radio Dongle that is plugged into the Gateway, you can use the radio communication of the IoT Node with the Gateway. Up to 32 IoT Nodes can be connected to the Gateway.
+Your solution must take into account the following requirements:
+Prepare and have approved the basic idea of the project you will solve during the class.
+Create project documentation according to the uuApp Framework (Business Requests, Business Model, Application Model). The documentation must cover both cloud application and IoT parts (IoT Node, gateway).
+Connect and program the IoT node (HARDWARIO Core Module microcontroller, programming in Visual Studio Code using HARDWARIO Code or TOWER Extension)
+Program a "Gateway", a representative flow (or multiple flows) in NodeRED that will run on a RaspberryPi, or on your laptop. Our recommendation is to use RaspberryPi. The IoT Node will be connected to this device (either via USB and UART, or optionally wirelessly using the HARDWARIO Radio Dongle).
+In case of communication via USB, the IoT Node will be connected to just one gateway. In case of wireless communication, multiple IoT Nodes can be connected to one gateway.
+
+A necessary condition is to configure the device on which the Gateway will run so that when this device is started, the Gateway (i.e. NodeRED and its dependencies) will start automatically, without user intervention.
+
+Alternatively, if you have your own laptop as a Gateway device, you can implement Gateway as a Docker image. Then it is sufficient to consider restarting this docker image/container as "turning off" and "turning on" the device. When using the docker, however, beware of the need to make the docker container USB accessible so that it can talk to the IoT Node. This is not exactly a trivial process, so the docker image option is only recommended for advanced users.
+
+According to the proposal, implement a cloud application that will be able to receive data from the Gateway device, store it and retrieve it for further processing. The cloud application must be able to connect multiple Gateways.
+The Gateway communicates with the cloud application using the HTTPs protocol, calling the appropriate end-points.
+
+The backend must be implemented on top of Express.js or other downstream frameworks, the frontend must be built on top of React.js.
+
+The cloud application will be deployed and operated in the cloud and the delivered solution will be fully functional - IoT Node will communicate with Gateway, Gateway will communicate and send data to the cloud application. In the case of students who build their solution on top of the uuApp Framework, Unicorn University will ensure the provision of resources in the uuCloud to which the application will be deployed (
+uuCloudg02 Deployment Guideline (Unicorn University))
+IoT Node
+Within each project team you must purchase at least one ​HARDWARIO Core Module ​microcontroller. As a Unicorn University student, you can use the discount code ​UNICORN10 ​in the HARDWARIO e-shop to get a 10% discount.
+Gateway
+The Gateway will be an application in NodeRED (it will be NodeRED flow) that will run on a RaspberryPi or on your laptop.
+
+The Gateway will typically perform data downsampling for selected tasks (e.g. weather stations) - your IoT Node will measure data every 1-2s, or 10s. But your gateway will do downsampling for example to one data every 5 minutes. That's downsampling. There are a number of downsampling strategies - arithmetic mean, weighted mean, median, etc. You choose the appropriate strategy given your requirements. You should be able to justify and defend your decision.
+
+The gateway must be able to persist the measured data (after basic downsampling) and, when it has internet connectivity to the cloud, be able to send it. Once uploaded, the Gateway deletes the measured data, it does not store it permanently. The Gateway can delete the sent data immediately after sending, or within some retention period - e.g. 24 hours. The retention of unsent data is infinite. Retention of sent data is up to you, but there must be some retention for sent data. You roll it up yourself with respect to the requirements. You must be able to justify your decision.
+
+The gateway must be able to register to the cloud somehow and when it sends data to it it must be properly authenticated and authorized.
+
+You must use one of the databases listed below to store the data persistently. You can choose which one to use. You must always first install the appropriate database on the device where the Gateway is running (RaspberryPi or laptop) and then you must install the appropriate extension to NodeRed.
+
+SQLite - node-red-node-sqlite
+MongoDB - node-red-node-mongodb
+Redis - node-red-contrib-redis
+All of the above can also be installed on RaspberryPi. Other than the above databases are not allowed for the Gateway.
+
+Instructions for installing NodeRED can be found here:
+
+NodeJS (you need it in order to install NodeRED) - always use LTS version
+NodeRED
+How to install NodeRED
+In addition to the above database extensions, you will need these two extensions - one allows you to create a Dashboard for the Gateway and the other (node-red-node-serialport) allows you to communicate over UART with the Node device.
+
+node-red-dashboard
+node-red-node-serialport
+Below you will find useful links to the NodeRED documentation:
+
+Writing Functions and work with context and flow variables
+Your Gateway must also be equipped with a Dashboard - use node-red-dashboard for this. This Dashboard should display basic information about the connection to the cloud and other data you consider appropriate in the context of the task at hand (e.g. last measured temperature value, history of button presses, number of saved records waiting to be sent to the cloud application, ...).
