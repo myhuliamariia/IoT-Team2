@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 const cloudBaseUrl = process.env.CLOUD_BASE_URL ?? "http://localhost:4000";
 const enrollmentKey = process.env.GATEWAY_ENROLLMENT_KEY;
 const gatewayName = process.env.GATEWAY_NAME ?? "Terrarium Gateway";

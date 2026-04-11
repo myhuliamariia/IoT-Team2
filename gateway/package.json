@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "flow:generate": "node ./scripts/generate-flow.mjs",
-    "register": "node ./register-gateway.mjs",
+    "register": "node -r dotenv/config ./register-gateway.mjs dotenv_config_path=./.env",
     "simulate": "node ./simulator/mock-telemetry.mjs",
-    "start": "node-red --userDir ."
+    "start": "node -r dotenv/config ./node_modules/node-red/red.js --userDir . dotenv_config_path=./.env"
   },
   "dependencies": {
+    "dotenv": "^17.4.1",
     "node-red": "4.1.8",
     "node-red-dashboard": "3.6.6",
     "node-red-node-serialport": "2.0.3",

@@ -1,11 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const flowId = "flow_terrarium_gateway";
 const uiTabId = "ui_tab_gateway";
 const uiGroupId = "ui_group_status";
 const sqliteConfigId = "sqlite_gateway_db";
 const serialConfigId = "serial_gateway_port";
+const gatewayRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 function node(id, type, extra) {
   return { id, type, ...extra };
@@ -637,7 +639,8 @@ ${buildDashboardPayload}
   })
 ];
 
-const targetPath = path.resolve(process.cwd(), "gateway/flows/terrarium-gateway.json");
+const targetPath = path.resolve(gatewayRoot, "flows/terrarium-gateway.json");
+await fs.mkdir(path.dirname(targetPath), { recursive: true });
 await fs.writeFile(targetPath, `${JSON.stringify(nodes, null, 2)}\n`, "utf8");
 
 console.log(`Generated ${targetPath}`);
