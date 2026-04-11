@@ -12,7 +12,7 @@
 #include <twr_scheduler.h>
 #include <twr_tag_humidity.h>
 #include <twr_tmp112.h>
-#include <twr_usb_cdc.h>
+#include <twr_uart.h>
 
 #define TERRARIUM_FIRMWARE_VERSION "1.0.0"
 #define TERRARIUM_HARDWARE_REVISION "core-module-r2"

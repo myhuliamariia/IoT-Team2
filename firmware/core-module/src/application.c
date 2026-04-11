@@ -166,7 +166,7 @@ static void publish_task(void *param)
         TERRARIUM_HARDWARE_REVISION
     );
 
-    twr_usb_cdc_write(payload, strlen(payload));
+    twr_uart_write(TWR_UART_UART2, (uint8_t *) payload, strlen(payload));
     twr_led_pulse(&led, 25);
 
     button_latched = false;
@@ -181,7 +181,7 @@ void application_init(void)
     twr_led_init(&led, TWR_GPIO_LED, false, false);
     twr_led_set_mode(&led, TWR_LED_MODE_OFF);
 
-    twr_usb_cdc_init();
+    twr_uart_init(TWR_UART_UART2, TWR_UART_BAUDRATE_115200, TWR_UART_SETTING_8N1);
     twr_i2c_init(TWR_I2C_I2C0, TWR_I2C_SPEED_400_KHZ);
 
     twr_button_init(&button, TWR_GPIO_BUTTON, TWR_GPIO_PULL_DOWN, false);
