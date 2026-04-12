@@ -30,3 +30,5 @@ The flow implements:
 - HTTPS upload to the cloud API every 15 seconds
 - 24 hour retention for sent records and infinite retention for unsent records
 - a local Node-RED dashboard with queue and cloud status
+
+The provided `npm start` command runs Node-RED with its user directory in `gateway/.node-red` so it does not conflict with the repo's ESM package configuration.

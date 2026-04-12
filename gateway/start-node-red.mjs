@@ -23,7 +23,10 @@ if (!redScriptPath) {
   throw new Error(`Unable to locate the Node-RED entry script from ${packageJsonPath}.`);
 }
 
-const child = spawn(process.execPath, [redScriptPath, "--userDir", "."], {
+const userDir = path.resolve(".node-red");
+fs.mkdirSync(userDir, { recursive: true });
+
+const child = spawn(process.execPath, [redScriptPath, "--userDir", userDir], {
   stdio: "inherit",
   env: process.env
 });
