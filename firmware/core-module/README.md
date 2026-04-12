@@ -6,7 +6,7 @@ Sensors used:
 
 - onboard TMP112 temperature sensor
 - onboard LIS2DH12 accelerometer
-- external HARDWARIO Humidity Tag
+- external HARDWARIO Humidity Tag (optional)
 
 Runtime behavior:
 
@@ -31,3 +31,5 @@ The emitted payload is intentionally simple so the Node-RED gateway can timestam
 ```
 
 If your Humidity Tag revision is not `R3`, update `TERRARIUM_HUMIDITY_TAG_REVISION` in [application.h](/home/mwtn/biot/firmware/core-module/src/application.h).
+
+The current default firmware build targets a standalone Core Module, so onboard temperature and accelerometer are enabled, while Humidity Tag support is disabled until the external tag is physically attached. Re-enable it by setting `TERRARIUM_HUMIDITY_TAG_ENABLED` back to `1`.

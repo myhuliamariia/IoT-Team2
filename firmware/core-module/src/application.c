@@ -187,7 +187,7 @@ void application_init(void)
     twr_button_init(&button, TWR_GPIO_BUTTON, TWR_GPIO_PULL_DOWN, false);
     twr_button_set_event_handler(&button, button_event_handler, NULL);
 
-    twr_tmp112_init(&temperature_sensor, TWR_I2C_I2C0, 0x48);
+    twr_tmp112_init(&temperature_sensor, TWR_I2C_I2C0, TERRARIUM_CORE_TEMPERATURE_I2C_ADDRESS);
     twr_tmp112_set_event_handler(&temperature_sensor, temperature_event_handler, NULL);
     twr_tmp112_set_update_interval(&temperature_sensor, TERRARIUM_SENSOR_INTERVAL_MS);
 
