@@ -232,6 +232,21 @@ function normalizeOptionalString(value: string | null | undefined): string | nul
   return trimmed.length > 0 ? trimmed : null;
 }
 
+function assertTerrariumLimits(limits: {
+  minTemperatureC: number;
+  maxTemperatureC: number;
+  minHumidityPct: number;
+  maxHumidityPct: number;
+}): void {
+  if (limits.minTemperatureC >= limits.maxTemperatureC) {
+    throw new HttpError(400, "validation.failed", "Maximum temperature must be greater than the minimum.");
+  }
+
+  if (limits.minHumidityPct >= limits.maxHumidityPct) {
+    throw new HttpError(400, "validation.failed", "Maximum humidity must be greater than the minimum.");
+  }
+}
+
 function mapPersistenceError(error: unknown): never {
   if (isDuplicateKeyError(error)) {
     throw new HttpError(409, "terrarium.duplicate_name", "A terrarium with this name already exists.");
@@ -286,6 +301,8 @@ export async function getTerrariumDetail(id: string, hours: number): Promise<Ter
 
 export async function createTerrarium(input: TerrariumCreateInput): Promise<TerrariumSummary> {
   try {
+    assertTerrariumLimits(input);
+
     if (input.deviceId) {
       await assertDeviceAvailable(input.deviceId);
     }
@@ -342,6 +359,13 @@ export async function updateTerrarium(id: string, input: TerrariumUpdateInput): 
     current.maxTemperatureC = input.maxTemperatureC ?? current.maxTemperatureC;
     current.minHumidityPct = input.minHumidityPct ?? current.minHumidityPct;
     current.maxHumidityPct = input.maxHumidityPct ?? current.maxHumidityPct;
+
+    assertTerrariumLimits({
+      minTemperatureC: current.minTemperatureC,
+      maxTemperatureC: current.maxTemperatureC,
+      minHumidityPct: current.minHumidityPct,
+      maxHumidityPct: current.maxHumidityPct
+    });
 
     if (input.deviceId !== undefined) {
       current.deviceId = input.deviceId

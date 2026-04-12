@@ -72,7 +72,7 @@ const nodes = [
     databits: "8",
     parity: "none",
     stopbits: "1",
-    waitfor: "\\n",
+    waitfor: "",
     dtr: "none",
     rts: "none",
     cts: "false",
@@ -311,7 +311,7 @@ return [outgoing];
     z: flowId,
     name: "Queue reading in SQLite",
     func: `
-msg.topic = "INSERT INTO telemetry_queue (payload_json, created_at, sent_at) VALUES (?, ?, NULL)";
+msg.topic = "INSERT INTO telemetry_queue (payload_json, created_at, sent_at) VALUES ($payloadJson, $createdAt, NULL)";
 msg.payload = [JSON.stringify(msg.payload), new Date().toISOString()];
 return msg;
     `.trim(),
@@ -406,7 +406,8 @@ const readings = rows.map((row) => JSON.parse(row.payload_json));
 msg.url = apiBaseUrl + "/api/v1/ingest/telemetry";
 msg.method = "POST";
 msg.headers = {
-  Authorization: "Bearer " + apiKey
+  Authorization: "Bearer " + apiKey,
+  "Content-Type": "application/json"
 };
 msg.payload = {
   gatewaySlug,
@@ -438,7 +439,7 @@ return [msg, null];
     proxy: "",
     insecureHTTPParser: false,
     authType: "",
-    senderr: false,
+    senderr: true,
     headers: [],
     x: 1140,
     y: 360,
@@ -449,6 +450,11 @@ return [msg, null];
     name: "Handle upload response",
     func: `
 const queueIds = Array.isArray(msg.queueIds) ? msg.queueIds : [];
+const errorText = typeof msg.error === "string"
+  ? msg.error
+  : msg.error && msg.error.message
+    ? msg.error.message
+    : null;
 
 if (msg.statusCode >= 200 && msg.statusCode < 300) {
   flow.set("cloudStatus", {
@@ -461,15 +467,17 @@ if (msg.statusCode >= 200 && msg.statusCode < 300) {
     ${buildDashboardPayload}
   }
 
-  const placeholders = queueIds.map(() => "?").join(", ");
-  msg.topic = "UPDATE telemetry_queue SET sent_at = ? WHERE id IN (" + placeholders + ")";
+  const placeholders = queueIds.map((_, index) => "$id" + (index + 1)).join(", ");
+  msg.topic = "UPDATE telemetry_queue SET sent_at = $sentAt WHERE id IN (" + placeholders + ")";
   msg.payload = [new Date().toISOString(), ...queueIds];
   return [msg, { payload: flow.get("latestReading") || {} }];
 }
 
 flow.set("cloudStatus", {
   state: "offline",
-  message: "Upload failed with status " + (msg.statusCode || "unknown") + ".",
+  message: errorText
+    ? "Upload failed: " + errorText
+    : "Upload failed with status " + (msg.statusCode || "unknown") + ".",
   updatedAt: new Date().toISOString()
 });
 
@@ -514,7 +522,7 @@ ${buildDashboardPayload}
     name: "Delete old sent rows",
     func: `
 const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-msg.topic = "DELETE FROM telemetry_queue WHERE sent_at IS NOT NULL AND sent_at < ?";
+msg.topic = "DELETE FROM telemetry_queue WHERE sent_at IS NOT NULL AND sent_at < $cutoff";
 msg.payload = [cutoff];
 return msg;
     `.trim(),
