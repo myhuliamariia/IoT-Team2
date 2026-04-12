@@ -7,7 +7,7 @@
     "flow:generate": "node ./scripts/generate-flow.mjs",
     "register": "node -r dotenv/config ./register-gateway.mjs dotenv_config_path=./.env",
     "simulate": "node ./simulator/mock-telemetry.mjs",
-    "start": "node -r dotenv/config ./node_modules/node-red/red.js --userDir . dotenv_config_path=./.env"
+    "start": "node ./start-node-red.mjs"
   },
   "dependencies": {
     "dotenv": "^17.4.1",
