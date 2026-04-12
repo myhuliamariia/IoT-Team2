@@ -25,6 +25,11 @@ if (!redScriptPath) {
 
 const userDir = path.resolve(".node-red");
 fs.mkdirSync(userDir, { recursive: true });
+fs.writeFileSync(
+  path.join(userDir, "package.json"),
+  `${JSON.stringify({ type: "commonjs" }, null, 2)}\n`,
+  "utf8"
+);
 
 const child = spawn(process.execPath, [redScriptPath, "--userDir", userDir], {
   stdio: "inherit",
