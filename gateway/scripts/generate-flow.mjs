@@ -390,7 +390,7 @@ if (rows.length === 0) {
     message: "Queue is empty.",
     updatedAt: new Date().toISOString()
   });
-  ${buildDashboardPayload}
+  ${buildDashboardPayload.replace("return msg;", "return [null, msg];")}
 }
 
 if (!apiKey) {
@@ -399,7 +399,7 @@ if (!apiKey) {
     message: "Missing GATEWAY_API_KEY.",
     updatedAt: new Date().toISOString()
   });
-  ${buildDashboardPayload}
+  ${buildDashboardPayload.replace("return msg;", "return [null, msg];")}
 }
 
 const readings = rows.map((row) => JSON.parse(row.payload_json));
