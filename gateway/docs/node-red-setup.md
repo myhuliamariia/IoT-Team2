@@ -31,4 +31,4 @@ The flow implements:
 - 24 hour retention for sent records and infinite retention for unsent records
 - a local Node-RED dashboard with queue and cloud status
 
-The provided `npm start` command runs Node-RED with its user directory in `gateway/.node-red` so it does not conflict with the repo's ESM package configuration.
+The provided `npm start` command runs Node-RED with its user directory in `gateway/.node-red` so it does not conflict with the repo's ESM package configuration. On first start it also copies `gateway/flows/terrarium-gateway.json` into `.node-red/flows.json`, so the gateway flow is preloaded automatically after you generate it.

@@ -31,6 +31,13 @@ fs.writeFileSync(
   "utf8"
 );
 
+const bundledFlowPath = path.resolve("flows", "terrarium-gateway.json");
+const runtimeFlowPath = path.join(userDir, "flows.json");
+
+if (fs.existsSync(bundledFlowPath) && !fs.existsSync(runtimeFlowPath)) {
+  fs.copyFileSync(bundledFlowPath, runtimeFlowPath);
+}
+
 const child = spawn(process.execPath, [redScriptPath, "--userDir", userDir], {
   stdio: "inherit",
   env: process.env
