@@ -162,6 +162,14 @@ export const healthAlertSchema = z.object({
   resolvedAt: z.string().datetime().nullable()
 });
 
+export const terrariumEventSchema = z.object({
+  id: z.string(),
+  type: z.enum(["button_pressed", "movement_detected"]),
+  severity: z.enum(["info", "warning", "critical"]),
+  message: z.string(),
+  occurredAt: z.string().datetime()
+});
+
 export const deviceSummarySchema = z.object({
   id: z.string(),
   externalId: z.string(),
@@ -208,7 +216,8 @@ export const terrariumHistoryPointSchema = z.object({
 });
 
 export const terrariumDetailSchema = terrariumSummarySchema.extend({
-  history: z.array(terrariumHistoryPointSchema)
+  history: z.array(terrariumHistoryPointSchema),
+  recentEvents: z.array(terrariumEventSchema)
 });
 
 export const gatewaySummarySchema = z.object({
@@ -248,6 +257,7 @@ export type TerrariumUpdateInput = z.infer<typeof terrariumUpdateSchema>;
 export type DeviceSummary = z.infer<typeof deviceSummarySchema>;
 export type TerrariumSummary = z.infer<typeof terrariumSummarySchema>;
 export type TerrariumHistoryPoint = z.infer<typeof terrariumHistoryPointSchema>;
+export type TerrariumEvent = z.infer<typeof terrariumEventSchema>;
 export type TerrariumDetail = z.infer<typeof terrariumDetailSchema>;
 export type GatewaySummary = z.infer<typeof gatewaySummarySchema>;
 export type OverviewResponse = z.infer<typeof overviewResponseSchema>;

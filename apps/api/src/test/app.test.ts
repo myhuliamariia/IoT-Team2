@@ -18,7 +18,8 @@ const {
   GatewayModel,
   IngestBatchModel,
   SensorReadingModel,
-  TerrariumModel
+  TerrariumModel,
+  allModels
 } = await import("../db/models.js");
 
 let app: Express;
@@ -31,6 +32,7 @@ describe("Terrarium API", () => {
     process.env.MONGODB_DB_NAME = "biot_test";
     const env = loadEnv(process.env);
     await connectToDatabase(env);
+    await Promise.all(allModels.map((model) => model.syncIndexes()));
     app = createApp(env);
   });
 
@@ -164,6 +166,115 @@ describe("Terrarium API", () => {
     expect(detail.body.connectionStatus).toBe("connected");
     expect(detail.body.latestReading.temperatureC).toBe(27.1);
     expect(detail.body.history.length).toBeGreaterThan(0);
+  });
+
+  it("returns active alerts and recent device events for a terrarium detail view", async () => {
+    const registration = await request(app).post("/api/v1/gateways/register").send({
+      enrollmentKey: "test-enrollment-key-123",
+      gatewayName: "Alert Gateway",
+      gatewaySlug: "alert-gateway",
+      machineLabel: "Windows alert host",
+      softwareVersion: "1.0.0"
+    });
+
+    expect(registration.status).toBe(201);
+
+    const terrarium = await request(app).post("/api/v1/terrariums").send({
+      name: "Leopard Gecko",
+      speciesName: "Eublepharis macularius",
+      minTemperatureC: 24,
+      maxTemperatureC: 30,
+      minHumidityPct: 30,
+      maxHumidityPct: 45,
+      deviceId: null
+    });
+
+    expect(terrarium.status).toBe(201);
+
+    const discoveryIngest = await request(app)
+      .post("/api/v1/ingest/telemetry")
+      .set("Authorization", `Bearer ${registration.body.apiKey}`)
+      .send({
+        gatewaySlug: "alert-gateway",
+        sentAt: new Date().toISOString(),
+        readings: [
+          {
+            deviceExternalId: "cm-alert-01",
+            capturedAt: new Date().toISOString(),
+            temperatureC: 27.2,
+            humidityPct: 38.4,
+            accelerationG: 1.01,
+            movementDetected: false,
+            buttonPressed: false,
+            sampleCount: 1,
+            source: "aggregate",
+            firmwareVersion: "1.0.0",
+            hardwareRevision: "core-module-r2"
+          }
+        ]
+      });
+
+    expect(discoveryIngest.status).toBe(202);
+
+    const devices = await request(app).get("/api/v1/devices");
+    expect(devices.status).toBe(200);
+    expect(devices.body).toHaveLength(1);
+
+    const assignResponse = await request(app)
+      .patch(`/api/v1/terrariums/${terrarium.body.id}`)
+      .send({
+        deviceId: devices.body[0].id
+      });
+
+    expect(assignResponse.status).toBe(200);
+
+    const alertingIngest = await request(app)
+      .post("/api/v1/ingest/telemetry")
+      .set("Authorization", `Bearer ${registration.body.apiKey}`)
+      .send({
+        gatewaySlug: "alert-gateway",
+        sentAt: new Date().toISOString(),
+        readings: [
+          {
+            deviceExternalId: "cm-alert-01",
+            capturedAt: new Date().toISOString(),
+            temperatureC: 33.5,
+            humidityPct: 37.2,
+            accelerationG: 1.27,
+            movementDetected: true,
+            buttonPressed: true,
+            sampleCount: 1,
+            source: "instant",
+            firmwareVersion: "1.0.0",
+            hardwareRevision: "core-module-r2"
+          }
+        ]
+      });
+
+    expect(alertingIngest.status).toBe(202);
+
+    const detail = await request(app).get(`/api/v1/terrariums/${terrarium.body.id}?hours=24`);
+    expect(detail.status).toBe(200);
+    expect(detail.body.activeAlerts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: "temperature_high",
+          severity: "critical"
+        })
+      ])
+    );
+    expect(detail.body.recentEvents).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "button_pressed",
+          severity: "info"
+        }),
+        expect.objectContaining({
+          type: "movement_detected",
+          severity: "warning"
+        })
+      ])
+    );
   });
 
   it("rejects partial updates that would make terrarium limits invalid", async () => {

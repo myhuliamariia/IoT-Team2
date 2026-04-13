@@ -4,6 +4,7 @@ import type {
   OverviewResponse,
   TerrariumCreateInput,
   TerrariumDetail,
+  TerrariumEvent,
   TerrariumHistoryPoint,
   TerrariumSummary,
   TerrariumUpdateInput
@@ -12,11 +13,13 @@ import { toIdString, toObjectId } from "../db/ids.js";
 import {
   AlertModel,
   DeviceModel,
+  DeviceEventModel,
   GatewayModel,
   SensorReadingModel,
   TerrariumModel,
   type AlertRecord,
   type DeviceRecord,
+  type DeviceEventRecord,
   type GatewayRecord,
   type SensorReadingRecord,
   type TerrariumRecord
@@ -57,6 +60,42 @@ function mapAlertSummary(alert: AlertRecord) {
     thresholdValue: alert.thresholdValue ?? null,
     triggeredAt: alert.triggeredAt.toISOString(),
     resolvedAt: toIso(alert.resolvedAt)
+  };
+}
+
+function mapDeviceEventSummary(event: DeviceEventRecord): TerrariumEvent {
+  let message = "A device event was recorded.";
+
+  if (event.type === "button_pressed") {
+    message = "Manual button press was recorded on the assigned device.";
+  }
+
+  if (event.type === "movement_detected") {
+    let suffix = ".";
+
+    if (event.payloadJson) {
+      try {
+        const payload = JSON.parse(event.payloadJson) as {
+          accelerationG?: unknown;
+        };
+
+        if (typeof payload.accelerationG === "number") {
+          suffix = ` (${payload.accelerationG.toFixed(2)} g).`;
+        }
+      } catch {
+        // Ignore malformed historical payloads and fall back to a generic message.
+      }
+    }
+
+    message = `Movement was detected by the assigned device${suffix}`;
+  }
+
+  return {
+    id: toIdString(event._id)!,
+    type: event.type as TerrariumEvent["type"],
+    severity: event.severity as TerrariumEvent["severity"],
+    message,
+    occurredAt: event.occurredAt.toISOString()
   };
 }
 
@@ -293,9 +332,16 @@ export async function getTerrariumDetail(id: string, hours: number): Promise<Ter
     buttonPressed: reading.buttonPressed
   }));
 
+  const recentEvents = (await DeviceEventModel.find({
+    terrariumId
+  }).sort({ occurredAt: -1, _id: -1 }).limit(10)).map((document) =>
+    mapDeviceEventSummary(document.toObject() as DeviceEventRecord)
+  );
+
   return {
     ...summary,
-    history: mappedHistory
+    history: mappedHistory,
+    recentEvents
   };
 }
 

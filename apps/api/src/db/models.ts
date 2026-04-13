@@ -109,6 +109,7 @@ export type DeviceRecord = InferSchemaType<typeof deviceSchema> & { _id: Types.O
 export type TerrariumRecord = InferSchemaType<typeof terrariumSchema> & { _id: Types.ObjectId };
 export type SensorReadingRecord = InferSchemaType<typeof sensorReadingSchema> & { _id: Types.ObjectId };
 export type AlertRecord = InferSchemaType<typeof alertSchema> & { _id: Types.ObjectId };
+export type DeviceEventRecord = InferSchemaType<typeof deviceEventSchema> & { _id: Types.ObjectId };
 
 export const GatewayModel = mongoose.models.Gateway ?? mongoose.model("Gateway", gatewaySchema);
 export const DeviceModel = mongoose.models.Device ?? mongoose.model("Device", deviceSchema);

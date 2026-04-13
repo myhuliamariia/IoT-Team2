@@ -4,6 +4,7 @@ import type { DeviceSummary, OverviewResponse, TerrariumCreateInput, TerrariumDe
 import { Route, Routes, useNavigate, useParams } from "react-router-dom";
 import { apiFetch, ApiError } from "../api/client";
 import { MetricCard } from "../components/MetricCard";
+import { NotificationFeed } from "../components/NotificationFeed";
 import { StatusBadge } from "../components/StatusBadge";
 import { TerrariumFormDialog } from "../components/TerrariumFormDialog";
 import { formatAcceleration, formatDateTime, formatHumidity, formatRelative, formatTemperature } from "../lib/format";
@@ -350,38 +351,42 @@ function DashboardRoute() {
                   )}
                 </article>
 
-                <article className="info-card">
-                  <div className="section-header">
-                    <h3>Assignment</h3>
-                    <p>{detail.device ? "Bound" : "Pending"}</p>
-                  </div>
-                  <div className="key-value-stack">
-                    <div>
-                      <span>Assigned device</span>
-                      <strong className="value-text" title={detail.device?.externalId ?? "No device assigned"}>
-                        {detail.device?.externalId ?? "No device assigned"}
-                      </strong>
+                <div className="detail-side-stack">
+                  <article className="info-card">
+                    <div className="section-header">
+                      <h3>Assignment</h3>
+                      <p>{detail.device ? "Bound" : "Pending"}</p>
                     </div>
-                    <div>
-                      <span>Gateway</span>
-                      <strong className="value-text" title={detail.device?.gatewayName ?? "Not available"}>
-                        {detail.device?.gatewayName ?? "Not available"}
-                      </strong>
+                    <div className="key-value-stack">
+                      <div>
+                        <span>Assigned device</span>
+                        <strong className="value-text" title={detail.device?.externalId ?? "No device assigned"}>
+                          {detail.device?.externalId ?? "No device assigned"}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>Gateway</span>
+                        <strong className="value-text" title={detail.device?.gatewayName ?? "Not available"}>
+                          {detail.device?.gatewayName ?? "Not available"}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>Latest payload</span>
+                        <strong className="value-text">
+                          {detail.latestReading ? formatDateTime(detail.latestReading.capturedAt) : "No telemetry yet"}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>Button state</span>
+                        <strong className="value-text">
+                          {detail.latestReading?.buttonPressed ? "Pressed in latest sample" : "No recent press"}
+                        </strong>
+                      </div>
                     </div>
-                    <div>
-                      <span>Latest payload</span>
-                      <strong className="value-text">
-                        {detail.latestReading ? formatDateTime(detail.latestReading.capturedAt) : "No telemetry yet"}
-                      </strong>
-                    </div>
-                    <div>
-                      <span>Button state</span>
-                      <strong className="value-text">
-                        {detail.latestReading?.buttonPressed ? "Pressed in latest sample" : "No recent press"}
-                      </strong>
-                    </div>
-                  </div>
-                </article>
+                  </article>
+
+                  <NotificationFeed detail={detail} />
+                </div>
               </section>
 
               <article className="info-card chart-section">
