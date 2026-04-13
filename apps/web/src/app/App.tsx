@@ -200,15 +200,21 @@ function DashboardRoute() {
                 }}
               >
                 <div className="terrarium-card-row">
-                  <strong>{terrarium.name}</strong>
+                  <strong className="entity-name" title={terrarium.name}>
+                    {terrarium.name}
+                  </strong>
                   <StatusBadge label={terrarium.health} tone={statusTone(terrarium.health)} />
                 </div>
-                <p>{terrarium.speciesName ?? "Species not specified"}</p>
+                <p className="secondary-copy" title={terrarium.speciesName ?? "Species not specified"}>
+                  {terrarium.speciesName ?? "Species not specified"}
+                </p>
                 <div className="terrarium-card-row">
                   <span>{formatTemperature(terrarium.latestReading?.temperatureC)}</span>
                   <span>{formatHumidity(terrarium.latestReading?.humidityPct)}</span>
                 </div>
-                <small>{terrarium.device ? terrarium.device.externalId : "Device not assigned"}</small>
+                <small className="supporting-id" title={terrarium.device ? terrarium.device.externalId : "Device not assigned"}>
+                  {terrarium.device ? terrarium.device.externalId : "Device not assigned"}
+                </small>
               </button>
             ))}
           </div>
@@ -222,9 +228,13 @@ function DashboardRoute() {
               {devices.length === 0 ? <p className="muted-copy">No devices have uploaded telemetry yet.</p> : null}
               {devices.map((device) => (
                 <article key={device.id} className="list-card">
-                  <strong>{device.externalId}</strong>
-                  <p>{device.gatewayName ?? "No gateway linked"}</p>
-                  <small>{device.assignedTerrariumId ? "Assigned" : "Unassigned"}</small>
+                  <strong className="entity-name" title={device.externalId}>
+                    {device.externalId}
+                  </strong>
+                  <p className="secondary-copy" title={device.gatewayName ?? "No gateway linked"}>
+                    {device.gatewayName ?? "No gateway linked"}
+                  </p>
+                  <small className="supporting-id">{device.assignedTerrariumId ? "Assigned" : "Unassigned"}</small>
                 </article>
               ))}
             </div>
@@ -239,14 +249,18 @@ function DashboardRoute() {
               {overview.gateways.map((gateway) => (
                 <article key={gateway.id} className="list-card">
                   <div className="terrarium-card-row">
-                    <strong>{gateway.name}</strong>
+                    <strong className="entity-name" title={gateway.name}>
+                      {gateway.name}
+                    </strong>
                     <StatusBadge
                       label={gateway.connectionStatus}
                       tone={gateway.connectionStatus === "online" ? "good" : gateway.connectionStatus === "degraded" ? "warning" : "danger"}
                     />
                   </div>
-                  <p>{gateway.machineLabel ?? gateway.slug}</p>
-                  <small>Last seen {formatRelative(gateway.lastSeenAt)}</small>
+                  <p className="secondary-copy" title={gateway.machineLabel ?? gateway.slug}>
+                    {gateway.machineLabel ?? gateway.slug}
+                  </p>
+                  <small className="supporting-id">Last seen {formatRelative(gateway.lastSeenAt)}</small>
                 </article>
               ))}
             </div>
@@ -263,8 +277,10 @@ function DashboardRoute() {
               <div className="detail-header">
                 <div>
                   <p className="eyebrow">Selected Terrarium</p>
-                  <h2>{detail.name}</h2>
-                  <p className="hero-text">{detail.speciesName ?? "Species not specified"}</p>
+                  <h2 title={detail.name}>{detail.name}</h2>
+                  <p className="hero-text secondary-copy" title={detail.speciesName ?? "Species not specified"}>
+                    {detail.speciesName ?? "Species not specified"}
+                  </p>
                 </div>
                 <div className="detail-actions">
                   <StatusBadge label={detail.connectionStatus} tone={statusTone(detail.connectionStatus)} />
@@ -342,19 +358,27 @@ function DashboardRoute() {
                   <div className="key-value-stack">
                     <div>
                       <span>Assigned device</span>
-                      <strong>{detail.device?.externalId ?? "No device assigned"}</strong>
+                      <strong className="value-text" title={detail.device?.externalId ?? "No device assigned"}>
+                        {detail.device?.externalId ?? "No device assigned"}
+                      </strong>
                     </div>
                     <div>
                       <span>Gateway</span>
-                      <strong>{detail.device?.gatewayName ?? "Not available"}</strong>
+                      <strong className="value-text" title={detail.device?.gatewayName ?? "Not available"}>
+                        {detail.device?.gatewayName ?? "Not available"}
+                      </strong>
                     </div>
                     <div>
                       <span>Latest payload</span>
-                      <strong>{detail.latestReading ? formatDateTime(detail.latestReading.capturedAt) : "No telemetry yet"}</strong>
+                      <strong className="value-text">
+                        {detail.latestReading ? formatDateTime(detail.latestReading.capturedAt) : "No telemetry yet"}
+                      </strong>
                     </div>
                     <div>
                       <span>Button state</span>
-                      <strong>{detail.latestReading?.buttonPressed ? "Pressed in latest sample" : "No recent press"}</strong>
+                      <strong className="value-text">
+                        {detail.latestReading?.buttonPressed ? "Pressed in latest sample" : "No recent press"}
+                      </strong>
                     </div>
                   </div>
                 </article>

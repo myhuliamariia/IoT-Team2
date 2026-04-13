@@ -8,3 +8,4 @@ dist
 .env.*.local
 !apps/api/.env
 coverage
+custom docs/
