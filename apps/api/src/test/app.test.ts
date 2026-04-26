@@ -161,6 +161,16 @@ describe("Terrarium API", () => {
 
     expect(secondIngest.status).toBe(202);
 
+    const ingestBatches = await IngestBatchModel.find().sort({ receivedAt: 1 });
+    const persistedReadings = await SensorReadingModel.find().sort({ capturedAt: 1 });
+
+    expect(ingestBatches).toHaveLength(2);
+    expect(persistedReadings).toHaveLength(2);
+    expect(ingestBatches.map((batch) => batch.recordsCount)).toEqual([1, 1]);
+    expect(persistedReadings.map((reading) => reading.ingestBatchId?.toString())).toEqual(
+      ingestBatches.map((batch) => batch._id.toString())
+    );
+
     const detail = await request(app).get(`/api/v1/terrariums/${terrarium.body.id}?hours=24`);
     expect(detail.status).toBe(200);
     expect(detail.body.connectionStatus).toBe("connected");

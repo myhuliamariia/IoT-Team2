@@ -235,6 +235,7 @@ export async function ingestTelemetryBatch(
       terrariumId: terrarium?._id ?? null,
       gatewayId: gateway._id,
       deviceId: device._id,
+      ingestBatchId: ingestBatch._id,
       capturedAt,
       source: reading.source,
       sampleCount: reading.sampleCount,

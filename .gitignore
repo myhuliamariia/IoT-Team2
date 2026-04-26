@@ -8,4 +8,5 @@ dist
 .env.*.local
 !apps/api/.env
 coverage
+docs/slovak-technical-documentation/
 custom docs/

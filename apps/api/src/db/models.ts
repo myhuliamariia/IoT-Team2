@@ -45,6 +45,7 @@ const sensorReadingSchema = new Schema(
     terrariumId: { type: Types.ObjectId, ref: "Terrarium", default: null, index: true },
     gatewayId: { type: Types.ObjectId, ref: "Gateway", required: true, index: true },
     deviceId: { type: Types.ObjectId, ref: "Device", required: true, index: true },
+    ingestBatchId: { type: Types.ObjectId, ref: "IngestBatch", default: null, index: true },
     capturedAt: { type: Date, required: true, index: true },
     source: { type: String, required: true },
     sampleCount: { type: Number, required: true, default: 1 },
@@ -61,6 +62,7 @@ const sensorReadingSchema = new Schema(
 sensorReadingSchema.index({ terrariumId: 1, capturedAt: -1 });
 sensorReadingSchema.index({ deviceId: 1, capturedAt: -1 });
 sensorReadingSchema.index({ gatewayId: 1, capturedAt: -1 });
+sensorReadingSchema.index({ ingestBatchId: 1, capturedAt: -1 });
 
 const alertSchema = new Schema(
   {
